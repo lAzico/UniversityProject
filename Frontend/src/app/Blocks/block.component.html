@@ -1,0 +1,404 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+
+<div class="card">
+  <div class="card-header">
+    <div class="entry">
+      <div class="icon">
+        <fa-icon [icon]="faCube" *ngIf="blockData?.[0]?.['Block number'] || blockData?.['Block Number']"></fa-icon>
+        <fa-icon [icon]="faMoneyCheckDollar" *ngIf="blockData?.['Ledger Data']?.['ledger_index']"></fa-icon>
+      </div>
+      <div class="desc">
+        <label *ngIf="blockData?.[0]?.['Block number'] || blockData?.['Block Number']">Block Number</label>
+        <label *ngIf="blockData?.['Ledger Data']?.['ledger_index']">Ledger index</label>
+        <span *ngIf="blockData?.[0]?.['Block number']">
+            {{ blockData?.[0]?.["Block number"] }}
+        </span>
+        <span *ngIf="blockData?.['Ledger Data']?.['ledger_index']"> {{ blockData?.['Ledger Data']?.['ledger_index'] }} </span>
+        <span *ngIf="blockData?.['Block Number']"> {{ blockData?.['Block Number'] }} </span>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="icon">
+        <fa-icon [icon]="faHashtag"></fa-icon>
+      </div>
+      <div class="desc">
+        <label *ngIf="blockData?.[1]?.length || blockData?.['Transaction Count']">No. transactions in block</label>
+        <label *ngIf="blockData?.['Ledger Data']">No. transactions in ledger</label>
+        <span *ngIf="blockData?.[1]?.length">{{ blockData?.[1]?.length }}</span>
+        <span *ngIf="blockData?.['Ledger Data']">{{ blockData?.Transactions?.length }}</span>
+        <span *ngIf="blockData?.['Transaction Count']">{{ blockData?.['Transaction Count'] }}</span>
+      </div>
+    </div>
+    <div class="entry" *ngIf="blockData?.['Output Count']">
+      <div class="icon">
+        <fa-icon [icon]="faSignOut"></fa-icon>
+      </div>
+      <div class="desc">
+        <label>Output </label>
+        <span>{{ blockData?.['Output Count'] }}</span>
+      </div>
+    </div>
+    <div class="entry" *ngIf="blockData?.['Input Count']">
+      <div class="icon">
+        <fa-icon [icon]="faSignIn"></fa-icon>
+      </div>
+      <div class="desc">
+        <label>Input </label>
+        <span>{{ blockData?.['Input Count'] }}</span>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="categories">
+    <button type="button" (click)="setActiveTab('block')">Block details</button>
+    <button type="button" (click)="setActiveTab('uncles')" *ngIf="blockData?.[0]?.['Uncles']?.length >0">Uncles
+      ({{blockData[0]['Uncles'].length}})
+    </button>
+    <button type="button" (click)="setActiveTab('transactions')" *ngIf="blockData?.[1]">Transactions
+      ({{blockData?.[1]?.length}})</button>
+    <button type="button" (click)="setActiveTab('bctransactions')" *ngIf="blockData?.['Transactions']">Transactions
+      ({{blockData?.['Transactions']?.length}})</button>
+  </div>
+
+  <hr>
+  <div class="blockdata" *ngIf="activeTab === 'block'">
+    <div class="blockdata-list">
+      <div class="entry" *ngIf="blockData?.[0]?.['Block miner'] || blockData?.['Guessed Miner']">
+        <div class="icon">
+          <fa-icon [icon]="faUser"></fa-icon>
+        </div>
+        <div class="desc">
+          <label>Block Miner</label>
+          <span *ngIf="blockData?.[0]?.['Block miner']">
+            <a data-field="address" [routerLink]="['/address',blockData?.[0]?.['Block miner']]"
+              (click)="updateQuery($event)">{{ blockData?.[0]?.["Block miner"] }}</a>
+          </span>
+          <span *ngIf="blockData?.['Ledger Data']?.['account_hash']">
+              {{ blockData?.['Ledger Data']?.['account_hash'] }}
+          </span>
+          <span *ngIf="blockData?.['Guessed Miner']">{{blockData?.['Guessed Miner']}} </span>
+        </div>
+      </div>
+      <div class="entry" *ngIf="blockData?.[0]?.['Block number']">
+        <div class="icon">
+          <fa-icon [icon]="faCube" *ngIf="blockData?.[0]?.['Block number']"></fa-icon>
+        </div>
+        <div class="desc">
+          <label *ngIf="blockData?.[0]?.['Block number']">Block Number</label>
+          <span *ngIf="blockData?.[0]?.['Block number']">
+            <a data-field="block" [routerLink]="['/block', blockData?.[0]?.['Block number']]"
+              (click)="updateQuery($event)">
+              {{ blockData?.[0]?.["Block number"] }}
+            </a>
+          </span>
+          <span *ngIf="blockData?.['Block Number']"> {{ blockData?.['Block Number'] }} </span>
+        </div>
+      </div>
+      <div class="entry" *ngIf="blockData?.['Ledger Data']?.['account_hash']">
+        <div class="icon">
+          <fa-icon [icon]="faAddressCard"></fa-icon>
+        </div>
+        <div class="desc">
+          <label *ngIf="blockData?.['Ledger Data']?.['account_hash']">Account</label>
+          <span *ngIf="blockData?.['Ledger Data']?.['account_hash']"> {{ blockData?.['Ledger Data']?.['account_hash'] }} </span>
+        </div>
+      </div>
+      <div class="entry" *ngIf="blockData?.['Ledger Data']?.['hash']">
+        <div class="icon">
+          <fa-icon [icon]="faMoneyCheckDollar"></fa-icon>
+        </div>
+        <div class="desc">
+          <label *ngIf="blockData?.['Ledger Data']?.['hash']">Ledger Hash</label>
+          <span *ngIf="blockData?.['Ledger Data']?.['hash']"> {{ blockData?.['Ledger Data']?.['hash'] }} </span>
+        </div>
+      </div>
+        
+      <div class="entry" *ngIf="blockData?.['Ledger Data']?.['parent_hash']">
+        <div class="icon">
+          <fa-icon [icon]="faCube"></fa-icon>
+        </div>
+        <div class="desc">
+          <label *ngIf="blockData?.['Ledger Data']?.['parent_hash']">Parent Hash</label>
+          <span *ngIf="blockData?.['Ledger Data']?.['parent_hash']"> {{ blockData?.['Ledger Data']?.['parent_hash'] }} </span>
+        </div>
+      </div>
+      <div class="entry" *ngIf="blockData?.['Ledger Data']?.['transaction_hash']">
+        <div class="icon">
+          <fa-icon [icon]="faHashtag"></fa-icon>
+        </div>
+        <div class="desc">
+          <label *ngIf="blockData?.['Ledger Data']?.['transaction_hash']">Transaction Hash</label>
+          <span *ngIf="blockData?.['Ledger Data']?.['transaction_hash']"> {{ blockData?.['Ledger Data']?.['transaction_hash'] }} </span>
+        </div>
+      </div>
+      <div class="entry">
+        <div class="icon">
+          <fa-icon [icon]="faClock"></fa-icon>
+        </div>
+        <div class="desc">
+          <label *ngIf="blockData?.['Timestamp'] || blockData?.[0]?.Timestamp" >Timestamp</label>
+          <label *ngIf="blockData?.['Ledger Data']?.['close_time_human']">Closed on</label>
+          <span *ngIf="blockData?.[0]?.Timestamp">{{ blockData?.[0]?.Timestamp }}</span>
+          <span *ngIf="blockData?.['Timestamp']">{{ blockData?.['Timestamp'] }}</span>
+          <span *ngIf="blockData?.['Ledger Data']?.['close_time_human']">{{ blockData?.['Ledger Data']?.['close_time_human'] }}</span>
+        </div>
+      </div>
+      <div class="entry" *ngIf ="blockData?.['Ledger Data']?.['total_coins']">
+        <div class="icon">
+          <fa-icon [icon]="faCoins"></fa-icon>
+        </div>
+        <div class="desc">
+          <label>Total Coins</label>
+          <span>{{ blockData?.['Ledger Data']?.['total_coins'] }} XRP (${{blockData?.['Ledger Data']?.['total_coins'] * blockData?.['Market Price USD']}})</span>
+        </div>
+      </div>
+
+      <div class="entry" *ngIf="blockData?.[0]?.['Uncles']?.length >0">
+        <div class="icon">
+          <fa-icon [icon]="faCoins"></fa-icon>
+        </div>
+        <div class="desc">
+          <label>Uncle Inclusion Reward</label>
+          <span>{{ blockData?.[0]?.["Uncle inclusion reward"] }}</span>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="entry" *ngIf="blockData?.[0]?.['Block reward'] || blockData?.['Reward'] ">
+      <div class="icon">
+        <fa-icon [icon]="faCoins"></fa-icon>
+      </div>
+      <div class="desc">
+        <label>Block Reward</label>
+        <span *ngIf="blockData?.[0]?.['Block reward']">{{ blockData?.[0]?.["Block reward"] }}</span>
+        <span *ngIf="blockData?.['Reward']">{{ blockData?.['Reward'] }} {{network}} (${{blockData?.['Reward
+          (USD)']}})</span>
+      </div>
+    </div>
+    <div class="entry" *ngIf="blockData?.['Fee']">
+      <div class="icon">
+        <fa-icon [icon]="faGasPump"></fa-icon>
+      </div>
+      <div class="desc">
+        <label>Block Fee</label>
+        <span>{{ blockData?.["Fee"] }} {{network}} (${{blockData?.['Fee (USD)']}})</span>
+      </div>
+    </div>
+    <div class="entry" *ngIf="blockData?.['Input Total']">
+      <div class="icon">
+        <fa-icon [icon]="faSignIn"></fa-icon>
+      </div>
+      <div class="desc">
+        <label>Input total</label>
+        <span>{{ blockData?.["Input Total"] }} {{network}} (${{blockData?.['Input Total (USD)']}})</span>
+      </div>
+    </div>
+    <div class="entry" *ngIf="blockData?.['Output Total']">
+      <div class="icon">
+        <fa-icon [icon]="faSignOut"></fa-icon>
+      </div>
+      <div class="desc">
+        <label>Output total</label>
+        <span>{{ blockData?.["Output Total"] }} {{network}} (${{blockData?.['Output Total (USD)']}})</span>
+      </div>
+    </div>
+  </div>
+  
+
+
+    <div class="blockdata" *ngIf="activeTab === 'uncles'">
+      <div class="blockdata-list " *ngFor="let uncle of blockData?.[0]?.Uncles">
+        <div class="entry">
+          <div class="icon">
+            <fa-icon [icon]="faUser"></fa-icon>
+          </div>
+          <div class="desc">
+            <label>Uncle Miner</label>
+            <span>
+              <a [routerLink]="['/address', uncle['Uncle miner']]" (click)="updateQuery($event)">
+                {{ uncle?.["Uncle miner"] }}
+              </a>
+            </span>
+          </div>
+        </div>
+
+        <div class="entry">
+          <div class="icon">
+            <fa-icon [icon]="faCube"></fa-icon>
+          </div>
+          <div class="desc">
+            <label>Uncle reward</label>
+            <span>
+              {{ uncle?.["Uncle reward"] }} {{network}}
+            </span>
+          </div>
+        </div>
+        <hr>
+      </div>
+    </div>
+
+    <div class="blockdata" *ngIf="activeTab === 'transactions'">
+      <div class="blockdata-list" *ngFor="let transaction of blockData?.[1]">
+        <div class="entry">
+          <div class="icon">
+            <fa-icon [icon]="faUser"></fa-icon>
+          </div>
+          <div class="desc">
+            <label>Transaction Hash</label>
+            <span *ngIf="transaction?.['tx_hash']">
+              <a [routerLink]="['/transaction', transaction['tx_hash']]" (click)="updateQuery($event)"
+                data-field="transaction">
+                {{ transaction["tx_hash"] }}
+              </a>
+            </span>
+            <span *ngIf="transaction?.['Transaction Hash']">
+              <a [routerLink]="['/transaction', transaction['Transaction Hash']]" (click)="updateQuery($event)"
+                data-field="transaction">
+                {{ transaction?.['Transaction Hash'] }}
+              </a>
+            </span>
+            <span *ngIf="transaction?.['Transaction Hash']">
+              <a [routerLink]="['/transaction', transaction['Transaction Hash']]" (click)="updateQuery($event)"
+                data-field="transaction">
+                {{ transaction?.['Transaction Hash'] }}
+              </a>
+            </span>
+          </div>
+        </div>
+        <div class="entry">
+          <div class="icon">
+            <fa-icon [icon]="faCoins"></fa-icon>
+          </div>
+          <div class="desc">
+            <label>Transaction Value</label>
+            <span>
+              {{ transaction["value"] }} {{network}}
+            </span>
+          </div>
+        </div>
+        <div class="entry">
+          <div class="icon">
+            <fa-icon [icon]="faAddressCard"></fa-icon>
+          </div>
+          <div class="desc">
+            <label>From</label>
+            <span><a [routerLink]="['/address',transaction['from_address']]" (click)="updateQuery($event)"
+                data-field="address">{{ transaction["from_address"] }}</a>
+            </span>
+          </div>
+        </div>
+        <div class="entry">
+          <div class="icon">
+            <fa-icon [icon]="faAddressCard"></fa-icon>
+          </div>
+          <div class="desc">
+            <label>To</label>
+            <span><a [routerLink]="['/address',transaction['to_address']]" (click)="updateQuery($event)"
+                data-field="address">{{ transaction["to_address"] }}</a>
+            </span>
+          </div>
+        </div>
+        <div class="entry">
+          <div class="icon">
+            <fa-icon [icon]="faGasPump"></fa-icon>
+          </div>
+          <div class="desc">
+            <label>Gas fee</label>
+            <span>
+              {{ transaction["gas_fee"] }}
+            </span>
+          </div>
+        </div>
+        <div class="entry">
+          <div class="icon">
+            <fa-icon [icon]="faCube"></fa-icon>
+          </div>
+          <div class="desc">
+            <label>Block Number</label>
+            <span>
+              {{ transaction["block_number"] }}
+            </span>
+          </div>
+        </div>
+        <hr>
+      </div>
+    </div>
+
+    <div class="blockdata" *ngIf="activeTab === 'bctransactions'">
+      <div class="blockdata-list"
+        *ngFor="let transaction of blockData?.['Transactions'] | paginate: { itemsPerPage: 100, currentPage: page }; let i = index">
+        <div class="entry">
+          <div class="icon-transactions">
+            <fa-icon [icon]="faHashtag"></fa-icon>
+            <div class="desc-transactions">
+              <label>Transaction Hash ({{ (page - 1) * 100 + i + 1 }}) </label>
+              <span>
+                <a [routerLink]="['/transaction', transaction['Transaction Hash']]" (click)="updateQuery($event)"
+                  data-field="transaction">{{ transaction["Transaction Hash"] }}</a>
+              </span>
+              <span>
+                <a [routerLink]="['/transaction', transaction['hash']]" (click)="updateQuery($event)"
+                  data-field="transaction">{{ transaction["hash"] }}</a>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="entry" *ngIf="transaction?.['Account']">
+          <div class="icon-transactions">
+            <fa-icon [icon]="faAddressCard"></fa-icon>
+            <div class="desc-transactions">
+              <label>Account</label>
+              <span>
+                <a [routerLink]="['/address', transaction['Account']]" (click)="updateQuery($event)"
+                  data-field="address">{{ transaction["Account"] }}</a>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="entry" *ngIf="transaction?.['TransactionType']">
+          <div class="icon-transactions">
+            <fa-icon [icon]="faFileLines"></fa-icon>
+            <div class="desc-transactions">
+              <label>Transaction </label>
+              <span>
+                {{ transaction["TransactionType"] }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="entry" *ngIf="transaction?.['Fee']">
+          <div class="icon-transactions">
+            <fa-icon [icon]="faGasPump"></fa-icon>
+            <div class="desc-transactions">
+              <label>Fee</label>
+              <span>
+                {{ transaction["Fee"] }} XRP (${{ (transaction["Fee"] * blockData['Market Price USD'])}})
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="entry" *ngIf="transaction?.['Sequence']">
+          <div class="icon-transactions">
+            <fa-icon [icon]="faCube"></fa-icon>
+            <div class="desc-transactions">
+              <label>Sequence</label>
+              <span>
+                {{ transaction["Sequence"] }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <hr *ngIf="i < blockData?.['Transactions']?.length -1 ">
+      </div>
+    </div>
+
+
+    <div class="card-footer">
+      <button class="favourite" (click)="addFavourite()"><fa-icon [icon]="faStar"></fa-icon></button>
+      <div class="pagination">
+        <pagination-controls (pageChange)="page = $event" *ngIf = "activeTab==='bctransactions'"></pagination-controls>
+      </div>
+    </div>

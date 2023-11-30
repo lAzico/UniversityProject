@@ -1,0 +1,112 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blockchain Explorer</title>
+</head>
+
+  <div class="container">
+    <h1>Crypto Explorer</h1>
+    <form
+      [formGroup]="searchBar"
+      (submit)="onSubmit(); $event.preventDefault()"
+    >
+      <div class="dropdowns">
+        <div class="form-group">
+          <label for="network">Network:</label>
+          <select id="network" formControlName="network">
+            <option *ngFor="let network of networksapp" [value]="network">
+              {{ networksMap[network] }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="querytype">Query Type:</label>
+          <select id="querytype" formControlName="querytype">
+            <option *ngFor="let query of queryType" [value]="query">
+              {{ queryMap[query] }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group search-bar">
+        <input
+          id="query"
+          type="text"
+          formControlName="query"
+          placeholder="Enter your query..."
+        />
+        <button [disabled]="!searchBar.valid" type="submit"><fa-icon [icon] = "faSearch"></fa-icon></button>
+      </div>
+      <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+    </form>
+  </div>
+
+    <div class="card" *ngFor = "let data of allData">
+      <div class="card-header">
+        <h2>{{data["network"]}}</h2>
+      </div>
+      <div class="card-info">
+        <div class="info-item">
+          <span class="data-title">{{data["Token name"]}}: </span>
+          <span>${{data["Price"]}}</span>
+          <br>
+          <span class="data-title">Gas Price (Gwei): </span>
+          <span>{{data["Gas price"]}}</span>
+          <br>
+          <span class="data-title">Latest Block: </span>
+          <a data-field="block" [routerLink]="['/block', data['Latest block number']]" (click)="updateForMouseClick($event)">
+          <span>{{data["Latest block number"]}}</span></a>
+        </div>
+      </div>
+      <div class="card-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Block ID</th>
+              <th>From</th>
+              <th>To</th>
+              <th>Hash</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let transaction of data['Transactions']">
+              <td>                  <a
+                attr.data-network="{{data.network}}"
+                [routerLink]="['/block', transaction.blockNumber]"
+                (click)="updateForMouseClick($event)"
+                data-field="block"
+                >{{ transaction.blockNumber }}</a
+              ></td>
+              <td>                    <a
+                attr.data-network="{{data.network}}"
+                [routerLink]="['/address', transaction.from]"
+                (click)="updateForMouseClick($event)"
+                data-field="address"
+                >{{ transaction.from }}</a
+              ></td>
+              <td><a
+                attr.data-network="{{data.network}}"
+                [routerLink]="['/address', transaction.to]"
+                (click)="updateForMouseClick($event)"
+                data-field="address"
+                >{{ transaction.to }}</a></td>
+              <td><a
+                attr.data-network="{{data.network}}"
+                [routerLink]="['/transaction', transaction.hash]"
+                data-field="transaction"
+                (click)="updateForMouseClick($event)"
+                >{{ transaction.hash }}</a
+              ></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+ 
+
+
+

@@ -1,0 +1,38 @@
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<div class = "wrapper" style="margin-top:100px ;">
+    <div class = "logo">
+        <img src="\assets\Ethereum token for navbar.png" alt="Crypto directory logo" style="width: 60px; height: 60px;">
+    </div>  
+    <div class="text-center mt-4 name"
+    style="margin-top:15px ; color: rgb(224, 139, 59); font-size: small;">
+Please enter your full name, display name, email and password
+</div>
+    <form [formGroup]= "SignUpForm" style="margin-top:15px ; color: black">
+
+            <div class="form-field d-flex align-items-center">
+                <input type="name" class="form-control" id="name" formControlName="name" placeholder="Enter name">
+            </div>
+            <div class="form-field d-flex align-items-center">
+                <input type="username" class="form-control" id="username" formControlName="username" placeholder="Enter username">
+            </div>    
+            <div class="form-field d-flex align-items-center">
+                <input type="email" class="form-control" id="email" formControlName="email" placeholder="Enter email">
+            </div>
+            <div *ngIf="SignUpForm.get('email').errors && SignUpForm.get('email').touched" class="text-danger">
+                <p *ngIf="SignUpForm.get('email').errors.required">Email is required</p>
+                <p *ngIf="SignUpForm.get('email').errors.email">Please enter a valid email</p>
+              </div>
+            <div class="form-field d-flex align-items-center">
+                <input type="password" class="form-control" id="password" formControlName="password" placeholder="Enter password">
+                    
+            </div>
+            <input type="checkbox" id="showPassword" (change)="togglePasswordVisibility()">
+            <label for="showPassword">Show password</label>
+        <button type="submit" class="btn mt-3" (click)="signUp()" [routerLink] = "['/login']" [ngClass]="{'opacity-50': SignUpForm.invalid}" [disabled]="SignUpForm.invalid">Submit</button>
+        
+        
+        
+        

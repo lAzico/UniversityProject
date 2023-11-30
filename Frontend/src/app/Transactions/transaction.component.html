@@ -1,0 +1,479 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+
+
+<div class="card">
+	<div class="card-header">
+		<div class="icon">
+			<fa-icon [icon]="faMoneyBill"></fa-icon>
+		</div>
+		<div class="desc">
+			<label>Transaction</label>
+			<span>{{ currentTransaction }}</span>
+		</div>
+		<div class="icon">
+
+			<fa-icon [icon]="faCube" *ngIf="transactionData?.['Block Number']"></fa-icon>
+			<fa-icon [icon]="faMoneyCheckDollar" *ngIf="transactionData?.['Ledger']"></fa-icon>
+		</div>
+		<div class="desc">
+			<label *ngIf="transactionData?.['Block Number']">Block number</label>
+			<label *ngIf="transactionData?.['Ledger']">Ledger</label>
+			<span *ngIf="transactionData?.['Block Number']"><a
+					[routerLink]="['/block', transactionData?.['Block Number']]" (click)="updateQuery($event)"
+					data-field="block">{{transactionData['Block Number']}}</a></span>
+			<span *ngIf="transactionData?.['Ledger']">{{transactionData?.['Ledger']}}</span>
+		</div>
+
+
+
+	</div>
+
+
+	<div class="categories">
+		<button type="button" (click)="setActiveTab('transaction')">Transaction details</button>
+		<button type="button" (click)="setActiveTab('ERC-20 Transactions')"
+			*ngIf="transactionData['ERC-20 Transfers'] >=1">ERC-20 Transactions ({{transactionData['ERC-20
+			Transfers'].length}}
+			transactions)</button>
+		<button type="button" (click)="setActiveTab('logs')" *ngIf="transactionData?.['logs']">Logs</button>
+		<button type="button" (click)="setActiveTab('Senders')" *ngIf="transactionData?.['Senders'] && isArray(transactionData?.['Senders'])">Senders ({{transactionData?.['Senders'].length}})</button>
+
+		<button type="button" (click)="setActiveTab('Recipients')" *ngIf="transactionData?.['Recipients']">Recipients
+			({{transactionData['Recipients'].length}} )</button>
+		<button type="button" (click)="setActiveTab('Affected Nodes')"
+			*ngIf="transactionData?.['Affected Nodes']">Affected nodes
+			({{transactionData?.['Affected Nodes']?.length}})</button>
+	</div>
+	<hr>
+	<div class="transactiondata" *ngIf="activeTab === 'transaction'">
+		<div class="transactiondata-list">
+
+			<div class="entry" *ngIf="transactionData?.['Account']">
+				<div class="icon">
+					<fa-icon [icon]="faAddressCard"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Source</label>
+
+					<span>
+						<a [routerLink]="['/address', transactionData.Account]" (click)="updateQuery($event)"
+							data-field="address">{{transactionData.Account}}
+						</a>
+					</span>
+				</div>
+			</div>
+			<div class="entry" *ngIf='transactionData["Status"] == "Success" || transactionData["Status"] == "success"'>
+				<div class="icon">
+					<fa-icon [icon]="faCheckCircle"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Status</label>
+					<span>{{transactionData["Status"]}}</span>
+				</div>
+			</div>
+			<div class="entry" *ngIf='transactionData["Status"] == "Fail" || transactionData["Status"] == "fail"'>
+				<div class="icon">
+					<fa-icon [icon]="faTimesCircle"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Status</label>
+					<span>{{transactionData["Status"]}}</span>
+				</div>
+			</div>
+		</div>
+		<div class="entry" *ngIf="transactionData['Timestamp']">
+			<div class="icon">
+				<fa-icon [icon]="faClock"></fa-icon>
+			</div>
+			<div class="desc">
+				<label>Timestamp</label>
+				<span>{{transactionData['Timestamp']}} UTC</span>
+			</div>
+		</div>
+
+	</div>
+
+
+
+	<hr *ngIf="activeTab === 'transaction'">
+	<div class="transactiondata" *ngIf="activeTab === 'transaction'">
+		<div class="transactiondata-list">
+			<div class="entry" *ngIf="transactionData?.['contract_from'] || transactionData?.['address_from'] ">
+				<div class="icon">
+					<fa-icon *ngIf="transactionData['contract_from']" [icon]="faFileLines"></fa-icon>
+					<fa-icon *ngIf="transactionData['address_from']" [icon]="faAddressCard"></fa-icon>
+				</div>
+				<div class="desc">
+					<label *ngIf="transactionData['contract_from']">Contract address from</label>
+					<label *ngIf="transactionData['address_from']">Address from</label>
+					<span>
+						<a [routerLink]="['/address', transactionData.contract_from]" (click)="updateQuery($event)"
+							*ngIf="transactionData['contract_from']" data-field="address">
+							> {{ transactionData.contract_from }}
+						</a>
+					</span>
+					<span>
+						<a [routerLink]="['/address', transactionData.address_from]" (click)="updateQuery($event)"
+							*ngIf="transactionData['address_from']"
+							data-field="address">{{transactionData['address_from']}}</a></span>
+				</div>
+			</div>
+			<div class="entry" *ngIf="transactionData?.['Value sent'] && transactionData?.['Value sent (USD)']">
+				<div class="icon">
+					<fa-icon [icon]="faCoins"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Value sent</label>
+					<span>{{transactionData["Value sent"]}} {{network}} (${{transactionData['Value sent
+						(USD)']}})</span>
+				</div>
+			</div>
+			<div class="entry" *ngIf="transactionData?.['TakerGets']">
+				<div class="icon">
+					<fa-icon [icon]="faSignIn"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Offer</label>
+					<span>{{transactionData["TakerGets"]['value']}} {{transactionData['TakerGets']['currency']}}</span>
+				</div>
+			</div>
+			<div class="entry" *ngIf="transactionData?.['TakerPays']">
+				<div class="icon">
+					<fa-icon [icon]="faSignOut"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Offer</label>
+					<span>{{transactionData["TakerPays"]}} XRP</span>
+				</div>
+			</div>
+			<div class="entry" *ngIf="transactionData['ERC-20 Transactions']">
+				<div class="icon">
+					<fa-icon [icon]="faCoins"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Value sent</label>
+					<span>{{transactionData["Value sent"]}} {{network}}</span>
+				</div>
+			</div>
+
+			<div class="entry" *ngIf="transactionData['Output Count']">
+				<div class="icon">
+					<fa-icon [icon]="faArrowRight"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Output count</label>
+					<span>{{transactionData["Output Count"]}} addresses</span>
+				</div>
+			</div>
+			<div class="entry" *ngIf="transactionData?.['Transaction Fee'] || transactionData?.['Fee'] ">
+				<div class="icon">
+					<fa-icon [icon]="faGasPump"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Transaction Fee</label>
+					<span *ngIf="transactionData?.['Transaction Fee']">
+						{{ transactionData['Transaction Fee'] }} {{network}} (${{transactionData['Transaction Fee
+						(USD)']}})
+					</span>
+					<span *ngIf="transactionData?.['Fee']">
+						{{ transactionData['Fee'] }} XRP
+					</span>
+				</div>
+			</div>
+			<div class="entry" *ngIf="transactionData['contract_to'] || transactionData['address_to']">
+				<div class="icon">
+					<fa-icon *ngIf="transactionData['contract_to']" [icon]="faFileLines"></fa-icon>
+					<fa-icon *ngIf="transactionData['address_to']" [icon]="faAddressCard"></fa-icon>
+				</div>
+				<div class="desc">
+					<label *ngIf="transactionData['contract_to']">Contract address to</label>
+					<label *ngIf="transactionData['address_to']">Address to</label>
+					<span>
+						<a [routerLink]="['/address', transactionData.contract_to]" (click)="updateQuery($event)"
+							*ngIf="transactionData['contract_to']" data-field="address">{{ transactionData.contract_to
+							}}</a>
+					</span>
+					<span>
+						<a [routerLink]="['/address', transactionData.address_to]" (click)="updateQuery($event)"
+							*ngIf="transactionData['address_to']"
+							data-field="address">{{transactionData['address_to']}}</a></span>
+				</div>
+			</div>
+			<div class="entry" *ngIf="transactionData['Gas Used']">
+				<div class="icon">
+					<fa-icon [icon]="faGasPump"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Gas used</label>
+					<span>{{transactionData["Gas Used"]}} Gas / {{transactionData["Effective Gas Price (Gwei)"]}}
+						(Gwei)</span>
+				</div>
+			</div>
+			<div class="entry" *ngIf="transactionData['Transaction Index']">
+				<div class="icon">
+					<fa-icon [icon]="faHashtag"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Transaction number</label>
+					<span>{{transactionData["Transaction Index"]}}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="transactiondata" *ngIf="activeTab === 'ERC-20 Transactions'">
+		<div class="transactiondata-list" *ngFor="let erc20 of transactionData['ERC-20 Transfers']">
+			<div class="entry">
+				<div class="icon">
+					<fa-icon [icon]="faCoins"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>ERC-20 Token address</label>
+					<span>
+						<a [routerLink]="['/address', erc20['ERC-20 Address']]" (click)="updateQuery($event)"
+							*ngIf="erc20['ERC-20 Address']" data-field="address">
+							{{erc20['ERC-20 Address'] }}
+						</a>
+					</span>
+				</div>
+			</div>
+			<div class="entry">
+				<div class="icon">
+					<fa-icon [icon]="faAddressCard"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Number of tokens transferred</label>
+					<span>
+						{{ erc20['ERC-20 Transfer amount'] }} tokens
+					</span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="transactiondata" *ngIf="activeTab === 'Recipients'">
+		<div class="transactiondata-list" *ngFor="let recipient of transactionData?.['Recipients']; let i = index">
+			<div class="entry">
+				<div class="icon">
+					<fa-icon [icon]="faHashtag"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Transaction hash</label>
+					<span>{{recipient['Transaction Hash']}}</span>
+				</div>
+			</div>
+			<div class="entry">
+				<div class="icon">
+					<fa-icon [icon]="faClock"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Timestamp</label>
+					<span>
+						{{ recipient['Timestamp'] }}
+					</span>
+				</div>
+			</div>
+			<div class="entry">
+				<div class="icon">
+					<fa-icon [icon]="faCube"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Block Number</label>
+					<span>
+						<a [routerLink]="['/block',recipient['Block Number']]" (click)="updateQuery($event)"
+							*ngIf="recipient['Block Number']" data-field="block">{{ recipient['Block Number'] }}</a>
+					</span>
+				</div>
+			</div>
+			<div class="entry">
+				<div class="icon">
+					<fa-icon [icon]="faAddressCard"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Recipient address</label>
+					<span>
+						<a [routerLink]="['/address',recipient['Recipient']]" (click)="updateQuery($event)"
+							*ngIf="recipient['Recipient']" data-field="address">{{ recipient['Recipient'] }}</a>
+					</span>
+				</div>
+			</div>
+			<div class="entry">
+				<div class="icon">
+					<fa-icon [icon]="faCoins"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Amount of tokens recieved</label>
+					<span>
+						{{ recipient['value'] }} {{network}} (${{recipient['value_usd']}})
+					</span>
+				</div>
+			</div>
+			<hr *ngIf="i < transactionData?.['Recipients'].length - 1">
+		</div>
+
+	</div>
+
+	<div class="transactiondata" *ngIf="activeTab === 'Senders'">
+		<div class="transactiondata-list" *ngFor="let sender of transactionData?.['Senders']; else nosenders; let i = index">
+			<div class="entry">
+				<div class="icon">
+					<fa-icon [icon]="faHashtag"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Transaction Hash</label>
+					<span>
+						<a [routerLink]="['/transaction',sender['Sender']]" (click)="updateQuery($event)"
+							*ngIf="sender['Sender']" data-field="transaction">{{ sender['Transaction Hash'] }}
+						</a>
+					</span>
+				</div>
+			</div>
+			<div class="entry">
+				<div class="icon">
+					<fa-icon [icon]="faClock"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Timestamp</label>
+					<span>
+						{{ sender['Timestamp'] }}
+					</span>
+				</div>
+			</div>
+			<div class="entry">
+				<div class="icon">
+					<fa-icon [icon]="faCube"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Block Number</label>
+					<span>
+						<a [routerLink]="['/block',sender['Block Number']]" (click)="updateQuery($event)"
+							*ngIf="sender['Block Number']" data-field="block">{{sender['Block Number']}}</a>
+					</span>
+				</div>
+			</div>
+
+			<div class="entry" *ngIf="sender?.['Sender']">
+				<div class="icon">
+					<fa-icon [icon]="faAddressCard"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Sender address</label>
+					<span>
+						<a [routerLink]="['/address',sender['Sender']]" (click)="updateQuery($event)"
+							*ngIf="sender['Sender']" data-field="address">{{ sender['Sender'] }}</a>
+					</span>
+				</div>
+			</div>
+			<div class="entry" *ngIf="sender?.['value']">
+				<div class="icon">
+					<fa-icon [icon]="faCoins"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Amount of tokens sent</label>
+					<span>
+						{{ sender['value'] }} {{network}} (${{sender['value_usd']}})
+					</span>
+				</div>
+			</div>
+
+			<hr *ngIf="i < transactionData?.['Senders'].length - 1">
+		</div>
+	</div>
+
+	<ng-template #nosenders>
+
+
+	</ng-template>
+
+	<div class="transactiondata" *ngIf="activeTab === 'Affected Nodes'">
+		<div class="transactiondata-list" *ngFor="let node of transactionData?.['Affected Nodes']; let i = index">
+			<div class="entry">
+				<div class="icon">
+					<fa-icon [icon]="faShareNodes"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Ledger node </label>
+					<span *ngIf="node?.['DeletedNode']">
+						Deleted node
+					</span>
+					<span *ngIf="node?.['ModifiedNode']">
+						Modified node
+					</span>
+					<span *ngIf="node?.['CreatedNode']">
+						Created node
+					</span>
+				</div>
+			</div>
+			<div class="entry">
+				<div class="icon">
+					<fa-icon [icon]="faCircleNodes"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Ledger entry type</label>
+					<span *ngIf="node?.['DeletedNode']">
+						{{ node['DeletedNode']['LedgerEntryType'] }}
+					</span>
+					<span *ngIf="node?.['ModifiedNode']">
+						{{ node['ModifiedNode']['LedgerEntryType'] }}
+					</span>
+					<span *ngIf="node?.['CreatedNode']">
+						{{ node['CreatedNode']['LedgerEntryType'] }}
+					</span>
+				</div>
+			</div>
+			<div class="entry">
+				<div class="icon">
+					<fa-icon [icon]="faMoneyCheckDollar"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Ledger Index</label>
+					<span *ngIf="node['DeletedNode']?.['LedgerIndex']">
+						{{ node['DeletedNode']?.['LedgerIndex'] }}
+					</span>
+					<span *ngIf="node['ModifiedNode']?.['LedgerIndex']">
+						{{ node['ModifiedNode']?.['LedgerIndex'] }}
+					</span>
+					<span *ngIf="node['CreatedNode']?.['LedgerIndex']">
+						{{ node['CreatedNode']?.['LedgerIndex'] }}
+					</span>
+				</div>
+			</div>
+			<div class="entry" *ngIf="node?.['Node']">
+				<div class="icon">
+					<fa-icon [icon]="faAddressCard"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Affected Node</label>
+					<span>
+						<a [routerLink]="['/address',node['Node']]" (click)="updateQuery($event)" *ngIf="node['Node']"
+							data-field="address">{{ node['Node'] }}</a>
+					</span>
+				</div>
+			</div>
+			<div class="entry" *ngIf="node?.['ModifiedNode']?.['PreviousTxnLgrSeq']">
+				<div class="icon">
+					<fa-icon [icon]="faArrowLeft"></fa-icon>
+				</div>
+				<div class="desc">
+					<label>Previous ledger sequence</label>
+					<span>
+						<a [routerLink]="['/block',node['ModifiedNode']?.['PreviousTxnLgrSeq']]"
+							(click)="updateQuery($event)" data-field="block">{{
+							node['ModifiedNode']?.['PreviousTxnLgrSeq'] }}</a>
+					</span>
+				</div>
+			</div>
+			<hr *ngIf="i < transactionData?.['Affected Nodes']?.length - 1">
+
+		</div>
+	</div>
+
+	<div class="card-footer">
+		<div class="desc">
+
+
+			<button class="favourite" (click)="addFavourite()"><fa-icon [icon]="faStar"></fa-icon></button>
+		</div>
+	</div>

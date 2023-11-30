@@ -1,0 +1,31 @@
+<div class = "wrapper" style="margin-top:100px ;">
+    <div class = "logo">
+        <img src="\assets\Ethereum token for navbar.png" alt="Crypto directory logo" style="width: 60px; height: 60px;">
+    </div>
+    <div class="text-center mt-4 name"
+            style="margin-top:15px ; color: #e08b3b;">
+        Please enter your email and password
+    </div>
+    <form [formGroup]= "Login" style="margin-top:15px ; color: black">
+        <div class="form-field d-flex align-items-center">
+            
+            
+            <input type="email" class="form-control" id="username" formControlName="username" placeholder="Enter email">
+        </div>
+        <div class="form-field d-flex align-items-center">
+            
+            
+            <input type="password" class="form-control" id="password" formControlName="password" placeholder="Password">
+        </div>
+
+
+        <button type="submit" class="btn mt-3" (click)="login()" [disabled]="Login.invalid" 
+        [ngClass]="{'opacity-50': Login.invalid}">Confirm</button>
+    </form>
+    <div class = "text-center fs-6">
+        <button type="submit" class="btn mt-3" [routerLink] = " ['/signup']">Sign up</button>
+    </div>
+
+</div>
+
+

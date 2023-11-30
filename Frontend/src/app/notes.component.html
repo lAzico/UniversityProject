@@ -1,0 +1,72 @@
+
+
+<div class="container" style="margin-top: 70px;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div *ngFor = "let user of users_list | async">
+                    <div class ="card text-white bg-primary mb-3">
+                        <div class="card-header">
+                            {{ user._id }}
+                        </div>
+                        <div class="card-body">
+                            
+                            {{ user.email }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class ="col-sm-12">
+            <div class="card bg-light mb-3"
+                 style="width: 30 rem; margin: auto"
+                 *ngFor = "let note of notes | async">
+                <div class="card-header">
+                    Note by {{ note.name}}
+                    on {{ note.date | date }}
+                </div>
+                <div class="card-body">
+                    {{ note.note }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+
+
+                <h2>Please leave a note this business</h2>
+                <form [formGroup] = "notesForm" (ngSubmit)="onSubmit()">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name"
+                               class="form-control" formControlName="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="note">Please leave a note below</label>
+                        <textarea name="note" id="note" rows ="3"
+                                  class="form-control" formControlName="note">
+                        </textarea>
+                    </div>
+                    <span *ngIf="isIncomplete()">
+                        You must complete all fields
+                    </span>
+    
+                    <button *ngIf= "!isIncomplete()" 
+                            type="submit"
+                            class="btn.btn-primary">Submit</button>
+                </form>
+
+            <ng-template #loggedOut>
+                <h2>Please login to note this business</h2>
+            </ng-template>
+
+        </div>
+    </div>
+</div>

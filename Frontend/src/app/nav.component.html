@@ -1,0 +1,54 @@
+<div
+  class="navbar navbar-expand-sm navbar-dark fixed-top"
+  style="background-color: #3163c0"
+>
+  <span class="navbar-brand" style="margin-left: 0.6em">
+    <img
+      src="\assets\Ethereum token for navbar.png"
+      alt="Crypto directory logo"
+      style="width: 45px; height: 45px"
+    />
+    Crypto Explorer
+  </span>
+  <ul class="navbar-nav">
+    <li class="nav-item">
+      <a routerLink="/" class="nav-link" (click) = "clearRequestData()">Home</a>
+    </li>
+    <li class="nav-item">
+      <a routerLink="/tutorials" class="nav-link">Tutorials</a>
+    </li>
+    <li class="nav-item" *ngIf="isAdmin()">
+      <a routerLink="/user-manager" class="nav-link">User management</a>
+    </li>
+    <ng-template #notAdmin> </ng-template>
+
+    <li class="nav-item" *ngIf="authService.isAuthenticated()">
+      <a routerLink="/userprofile" class="nav-link">User profile</a>
+    </li>
+    <li class="nav-item">
+      <a routerLink="/stats" class="nav-link">Statistics</a>
+    </li>
+  
+  </ul>
+
+  <div class="form-inline ms-auto" style="margin-right: 10px">
+    <button
+      class="btn btn-outline-light"
+      (click)="authService.logout()"
+      *ngIf="authService.isAuthenticated(); else loggedOut"
+    >
+      Logout
+    </button>
+
+    <ng-template #loggedOut>
+      <button class="btn btn-outline-light" routerLink="/login">Login</button>
+      <button
+        style="margin-left: 10px"
+        class="btn btn-outline-light"
+        routerLink="/signup"
+      >
+        Sign up
+      </button>
+    </ng-template>
+  </div>
+</div>

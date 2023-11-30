@@ -1,0 +1,6 @@
+Try and get the MongoDB client to retrieve specified user information, possibly with CookieService module.
+Once user information is shown only allow admins to access another page for user management (possibly add CRUD to this page), possibly by allowing the admin variable access.
+Paginate
+Allow a user to add reviews to a list of reviews.
+Allow CRUD to the reviews for the user.
+Notes page shows Notes ID not user ID

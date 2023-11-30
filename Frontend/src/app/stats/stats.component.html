@@ -1,0 +1,207 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+
+<div class="card">
+
+
+    <div class="categories">
+        <button type="button" (click)="setActiveTab('stats')">
+            General statistics
+        </button>
+        <button type="button" (click)="setActiveTab('top_1000')">
+            Top tokens ({{statisticslist?.['Top 1000']?.length}})
+        </button>
+        <button type="button" (click)="setActiveTab('halvening')">
+            Halvening statistics
+        </button>
+    </div>
+
+    <hr>
+
+    <div class="statsData" *ngIf="activeTab === 'stats'">
+        <div class="statsData-list" *ngFor="let blockchainName of getBlockchainNames(); let i = index">
+            <div class="entry" *ngIf="statisticslist?.['Stats']?.[blockchainName]">
+                <div class="icon">
+                    <fa-icon [icon]="faNetworkWired"></fa-icon>
+                </div>
+                <div class="desc">
+                    <label>Blockchain</label>
+                    <span>{{getCapitalizedName(blockchainName)}}</span>
+                </div>
+            </div>
+            <div class="entry" *ngIf="statisticslist?.['Stats']?.[blockchainName]?.['data']?.['blocks']">
+                <div class="icon">
+                    <fa-icon [icon]="faCube"></fa-icon>
+                </div>
+                <div class="desc">
+                    <label>Blocks</label>
+                    <span>{{statisticslist?.['Stats']?.[blockchainName]?.['data']?.['blocks'] || 'N/A'}}</span>
+                </div>
+            </div>
+            <div class="entry" *ngIf="statisticslist?.['Stats']?.[blockchainName]?.['data']?.['ledgers']">
+                <div class="icon">
+                    <fa-icon [icon]="faMoneyCheckDollar"></fa-icon>
+                </div>
+                <div class="desc">
+                    <label>Ledgers</label>
+                    <span>{{statisticslist?.['Stats']?.[blockchainName]?.['data']?.['ledgers'] || 'N/A'}}</span>
+                </div>
+            </div>
+            <div class="entry" *ngIf="statisticslist?.['Stats']?.[blockchainName]?.['data']?.['blocks_24h']">
+                <div class="icon">
+                    <fa-icon [icon]="faHardHat"></fa-icon>
+                </div>
+                <div class="desc">
+                    <label>Blocks over the past 24h</label>
+                    <span>{{statisticslist?.['Stats']?.[blockchainName]?.['data']?.['blocks_24h'] || 'N/A'}}</span>
+                </div>
+            </div>
+            <div class="entry" *ngIf="statisticslist?.['Stats']?.[blockchainName]?.['data']?.['ledgers_24h']">
+                <div class="icon">
+                    <fa-icon [icon]="faHardHat"></fa-icon>
+                </div>
+                <div class="desc">
+                    <label>Ledgers over the past 24h</label>
+                    <span>{{statisticslist?.['Stats']?.[blockchainName]?.['data']?.['ledgers_24h'] || 'N/A'}}</span>
+                </div>
+            </div>
+            <div class="entry" *ngIf="statisticslist?.['Stats']?.[blockchainName]?.['data']?.['market_price_usd']">
+                <div class="icon">
+                    <fa-icon [icon]="faDollarSign"></fa-icon>
+                </div>
+                <div class="desc">
+                    <label>Price of token</label>
+                    <span>${{statisticslist?.['Stats']?.[blockchainName]?.['data']?.['market_price_usd'] ||
+                        'N/A'}}</span>
+                </div>
+            </div>
+            <div class="entry" *ngIf="statisticslist?.['Stats']?.[blockchainName]?.['data']?.['transactions_24h']">
+                <div class="icon">
+                    <fa-icon [icon]="faSignOut"></fa-icon>
+                </div>
+                <div class="desc">
+                    <label>Transactions in the past 24h</label>
+                    <span>{{statisticslist?.['Stats']?.[blockchainName]?.['data']?.['transactions_24h'] ||
+                        'N/A'}}</span>
+                </div>
+            </div>
+
+            <div class="entry" *ngIf="statisticslist?.['Stats']?.[blockchainName]?.['data']?.['nodes']">
+                <div class="icon">
+                    <fa-icon [icon]="faNetworkWired"></fa-icon>
+                </div>
+                <div class="desc">
+                    <label>Nodes</label>
+                    <span>{{statisticslist?.['Stats']?.[blockchainName]?.['data']?.['nodes'] || 'N/A'}}</span>
+                </div>
+            </div>
+            <hr>
+        </div>
+
+
+
+    </div>
+
+    <div class="statsData" *ngIf="activeTab==='top_1000'">
+        <div class="statsData-list" *ngFor="let token of statisticslist?.['Top 1000']| paginate: { itemsPerPage: 100, currentPage: page }; let i=index ">
+            <div class="entry" >
+                <div class="icon">
+                    <fa-icon [icon]="faCircle"></fa-icon>
+                </div>
+                <div class="desc">
+                    <label>Name of token ({{i +1}})</label>
+                    <span>{{token?.['name']}}</span>
+                </div>
+            </div>
+            <div class="entry" >
+                <div class="icon">
+                    <fa-icon [icon]="faAddressCard"></fa-icon>
+                </div>
+                <div class="desc">
+                    <label>Token symbol</label>
+                    <span>{{token?.['symbol']}}</span>
+                </div>
+            </div>
+            <div class="entry" >
+                <div class="icon">
+                    <fa-icon [icon]="faCoins"></fa-icon>
+                </div>
+                <div class="desc">
+                    <label>Price of token</label>
+                    <span>${{token?.['price_usd']}}</span>
+                </div>
+            </div>
+            <div class="entry" >
+                <div class="icon">
+                    <fa-icon [icon]="faDollarSign"></fa-icon>
+                </div>
+                <div class="desc">
+                    <label>Market price cap</label>
+                    <span>${{token?.['market_cap_usd']}}</span>
+                </div>
+            </div>
+            <hr>
+        </div>
+
+        
+    </div>
+
+
+    <div class="statsData" *ngIf="activeTab==='halvening'">
+        <div class="statsData-list" *ngFor="let blockchainName of getHalveningNames();">
+            <div class="entry" *ngIf="statisticslist?.['Halvening']?.[blockchainName]" >
+                <div class="icon">
+                    <fa-icon [icon]="faNetworkWired"></fa-icon>
+                </div>
+                <div class="desc">
+                    <label>Blockchain</label>
+                    <span>{{getCapitalizedName(blockchainName)}}</span>
+                </div>
+            </div>
+            <div class="entry" *ngIf="statisticslist?.['Halvening']?.[blockchainName]">
+                <div class="icon">
+                    <fa-icon [icon]="faCube"></fa-icon>
+                </div>
+                <div class="desc">
+                    <label>Blocks until halvening</label>
+                    <span>{{statisticslist?.['Halvening']?.[blockchainName]?.['blocks_left']}}</span>
+                </div>
+            </div>
+            <div class="entry"*ngIf="statisticslist?.['Halvening']?.[blockchainName]" >
+                <div class="icon">
+                    <fa-icon [icon]="faCoins"></fa-icon>
+                </div>
+                <div class="desc">
+                    <label>Current reward</label>
+                    <span>{{statisticslist?.['Halvening']?.[blockchainName]?.['current_reward']}} {{blockchainName}}</span>
+                </div>
+            </div>
+            <div class="entry" >
+                <div class="icon">
+                    <fa-icon [icon]="faDollarSign"></fa-icon>
+                </div>
+                <div class="desc">
+                    <label>Next reward</label>
+                    <span>{{statisticslist?.['Halvening']?.[blockchainName]?.['halvening_reward']}} {{blockchainName}}</span>
+                </div>
+            </div>
+            <div class="entry">
+                <div class="icon">
+                    <fa-icon [icon]="faClock"></fa-icon>
+                </div>
+                <div class="desc">
+                    <label>Time of halvening</label>
+                    <span>{{statisticslist?.['Halvening']?.[blockchainName]?.['halvening_time']}} UTC</span>
+                </div>
+            </div>
+            <hr>
+        </div>
+    </div>
+
+
+
+
+<div class="card-footer">
+    <div class="pagination">
+        <pagination-controls (pageChange)="page = $event" *ngIf = "activeTab==='top_1000'"></pagination-controls>
+      </div>
+</div>

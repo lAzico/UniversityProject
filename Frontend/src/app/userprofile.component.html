@@ -1,0 +1,90 @@
+<div class="card">
+  <div class="card-body">
+    <div class="table-responsive" style="overflow:hidden;">
+      <table class="table" style="table-layout: fixed; background-color: white;">
+        <thead>
+          <tr>
+            <th style="color:purple;">User Id</th>
+            <th style="color:purple;">Name</th>
+            <th style="color:purple;">Email</th>
+            <ng-container *ngIf="userdetails.admin == true; else notAdmin">
+              <th style="color:purple;">Is admin?</th>
+            </ng-container>
+            <ng-template #notAdmin>
+
+            </ng-template>
+
+            <th style="color:purple;">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <td>{{ userdetails._id }}</td>
+          <td>{{ userdetails.name }}</td>
+          <td>{{ userdetails.username }}</td>
+          <ng-container *ngIf="userdetails.admin == true; else notAdmin">
+
+            <td>{{ userdetails.admin}}</td>
+
+          </ng-container>
+          <ng-template #notAdmin>
+
+          </ng-template>
+          <td>
+            <ng-container *ngIf="userdetails.admin == true; else notAdmin">
+
+            </ng-container>
+            
+            <span class="edit btn-danger btn-sm btn" (click)="deleteUser(userdetails._id)"
+              style="margin-left: 1em; background-color: red;">Delete</span>
+            <span class="edit btn-warning btn-sm btn" [routerLink]="['/edituser', userdetails._id]"
+              style="margin-left: 1em; background-color: rgb(226, 175, 7);">Edit</span>
+          </td>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+
+</div>
+
+<div class="card">
+
+  <div class="card-favourite" *ngFor="let favourite of favourites">
+    <div (click)="getFavouriteDetails(favourite.favourite_id)">
+      <div class="categories">
+        <button type="button" (click)="setActiveTab('Transactions')">
+          Favourite transactions ({{favouriteTransactions.length}})
+        </button>
+        <button type="button" (click)="setActiveTab('Addresses')">
+          Favourite addresses ({{favouriteAddresses.length}})
+        </button>
+        <button type="button" (click)="setActiveTab('Blocks')">
+          Favourite products ({{favouriteBlocks.length}})
+        </button>
+      </div>
+
+      <div class="transactionData">
+        <div class="transactionData-list">
+          <div *ngFor="let transaction of favouriteTransactions; let i = index">
+            <p>Transaction {{ i + 1 }}</p>
+            <!-- Rest of the code -->
+            <div class="entry">
+              <div class="icon">
+                <fa-icon [icon]="faHashtag"></fa-icon>
+              </div>
+              <div class="desc">
+                <label>Transaction hash</label>
+                <span>
+                  <a [routerLink]="['/transaction', transaction['Transaction hash']]" (click)="updateQuery($event)"
+                    data-field="transaction">{{transaction['Transaction hash']}}</a>
+                </span>
+              </div>
+            </div>
+          </div>
+          <pre>{{ favouriteTransactions | json }}</pre>
+        </div>
+      </div>
+    </div>

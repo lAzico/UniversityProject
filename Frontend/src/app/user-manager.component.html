@@ -1,0 +1,58 @@
+<div class="page-content page-container" id="page-content">
+    <div class="padding">
+        <div class="row container d-flex justify-content-center">
+
+<div class="col-lg-8 grid-margin stretch-card" style = "width: 100%;">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">User list</h4>
+                  <p class="card-description">
+                    Details about users
+                  </p>
+                  <div class="table-responsive"
+                       style="overflow:hidden;">
+                    <table class="table"
+                           style="table-layout: fixed; background-color: white;">
+                      <thead>
+                        <tr>
+                        <th style="color:purple;">ID</th>
+                        <th style="color:purple;">Name</th>
+                        <th style="color:purple;">User name</th>
+                        <th style="color:purple;">Admin?</th>
+                        <th style="color:purple;">Email</th>
+                        <ng-container *ngIf = "authService.admin">
+                          <th style="color:purple;">Admin actions</th>
+                        </ng-container>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor = "let user of users_list | async">
+                          <td>{{user._id}}</td>
+                          <td>{{ user.name }}</td>
+                          <td>{{ user.username }}</td>
+                          <td>{{user.admin}}</td>
+                          <td>{{user.email}}</td>
+
+                          
+                          <td>
+                          <span class = "edit btn-warning btn-sm btn"
+                                [routerLink] = "['/edituser', user._id]"
+                                style="margin-left: 1em;">Edit</span>
+                          
+                            <span class = "edit btn-danger btn-sm btn" 
+
+                            (click)= deleteUser(user._id)
+                            style="margin-left: 1em;">Delete</span>
+                          </td>
+                                                     
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+            
+            </div>
+              </div>
